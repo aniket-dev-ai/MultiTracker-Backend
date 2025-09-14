@@ -1,17 +1,7 @@
-// index.js
-const express = require("express");
-const app = express();
-const PORT = 3000;
+const app = require("./src/app.js");
 
-// Middleware to parse JSON body
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
-});
-
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

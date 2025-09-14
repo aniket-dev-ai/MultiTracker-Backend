@@ -1,0 +1,22 @@
+const express = require("express");
+require("dotenv").config();
+
+const authRoutes = require("./routes/authRoutes.js"); 
+const progressRoutes = require("./routes/progressRoute.js"); 
+
+const app = express();
+
+// Middleware
+app.use(express.json()); 
+
+// Base test route
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
+
+// Auth routes
+app.use("/api/auth", authRoutes);
+// Progress routes
+app.use("/api/progress", progressRoutes); 
+
+module.exports = app;

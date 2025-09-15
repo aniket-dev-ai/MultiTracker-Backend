@@ -46,13 +46,7 @@ async function signup(req, res) {
     }
     console.log("Image uploaded to:", imageUrl);
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: emailid,
-      password: password,
-    });
-    console.log("Supabase auth signup response:", authData, authError);
-
-    if (authError) return res.status(400).json({ error: authError.message });
+    // Skip Supabase Auth signup completely
 
     const { data: insertData, error: insertError } = await supabase
       .from("profile")
@@ -74,7 +68,7 @@ async function signup(req, res) {
       return res.status(500).json({ error: insertError.message });
     }
 
-    // Now fetch the inserted row explicitly
+    // Fetch the inserted row explicitly
     const { data: profileData, error: fetchError } = await supabase
       .from("profile")
       .select("*")
@@ -83,12 +77,9 @@ async function signup(req, res) {
 
     if (fetchError || !profileData) {
       await imagekit.deleteFile(imageUrl); // Cleanup image
-      return res
-        .status(500)
-        .json({
-          error:
-            fetchError?.message || "Failed to fetch profile after creation",
-        });
+      return res.status(500).json({
+        error: fetchError?.message || "Failed to fetch profile after creation",
+      });
     }
 
     const token = jwt.sign(
@@ -98,17 +89,16 @@ async function signup(req, res) {
     );
 
     res.status(201).json({
-      message: "Signup successful",
+      message: "Signup successful (custom auth)",
       token,
       profile: profileData,
       imageUrl,
     });
-
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 async function login(req, res) {
   const { emailid, password } = req.body;

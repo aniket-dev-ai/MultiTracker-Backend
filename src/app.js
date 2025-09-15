@@ -10,9 +10,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors(
-  origin = '*'
-));
+app.use(cors());
 
 // Base test route
 app.get("/", (req, res) => {

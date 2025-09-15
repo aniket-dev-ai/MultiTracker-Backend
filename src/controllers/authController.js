@@ -1,3 +1,4 @@
+const { all } = require("axios");
 const supabase = require("../config/supabaseClient");
 const CryptoJS = require("crypto-js");
 const ImgKit = require("imagekit");
@@ -101,16 +102,13 @@ async function signup(req, res) {
 
 
 async function login(req, res) {
-  const { emailid, password } = req.body;
+  const { emailid } = req.body;
 
   try {
-    const encryptedPassword = CryptoJS.SHA256(password).toString();
-
     const { data, error } = await supabase
       .from("profile")
       .select("*")
       .eq("emailid", emailid)
-      .eq("password", encryptedPassword)
       .single();
 
     if (error || !data)
@@ -128,4 +126,26 @@ async function login(req, res) {
   }
 }
 
-module.exports = { signup, login };
+async function getAllUsers(req, res) {
+  try {
+    // Supabase se 'profile' table ka data fetch karein
+    const { data, error } = await supabase
+      .from("profile")
+      .select("id, name, Image_Url , emailid") // Sirf zaroori columns select karein
+      .order("name", { ascending: true }); // Naam ke anusaar sort karein (optional)
+
+    // Agar Supabase se error aaye to handle karein
+    if (error) {
+      console.error("Supabase error fetching users:", error);
+      return res.status(400).json({ error: error.message });
+    }
+    res.status(200).json({ users: data });
+  } catch (err) {
+    // Server mein koi unexpected error aaye to handle karein
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Server error while fetching users." });
+  }
+}
+
+
+module.exports = { signup, login, getAllUsers};

@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "https://multi-tracker-tan.vercel.app/", // Aapka frontend URL
+    origin: "https://multi-tracker-tan.vercel.app", // Aapka frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
